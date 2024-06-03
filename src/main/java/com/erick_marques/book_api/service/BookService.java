@@ -92,6 +92,7 @@ public class BookService {
     @Transactional
     public void deleteBook(Long id) {
         validateId(id);
+        getBook(id);
         repository.deleteById(id);
     }
 
