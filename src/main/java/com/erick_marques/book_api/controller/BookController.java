@@ -37,7 +37,7 @@ public class BookController {
      */
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
-        List<BookResponseDTO> books = bookService.getAllBooks();
+        List<BookResponseDTO> books = bookService.findAllByOrderByCounterDesc();
         return ResponseEntity.ok(books);
     }
 

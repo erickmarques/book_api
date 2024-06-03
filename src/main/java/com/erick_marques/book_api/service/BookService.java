@@ -13,6 +13,7 @@ import com.erick_marques.book_api.repository.BookRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -32,8 +33,8 @@ public class BookService {
      *
      * @return uma lista de BookResponseDTO contendo todos os livros.
      */
-    public List<BookResponseDTO> getAllBooks() {
-        return repository.findAll()
+    public List<BookResponseDTO> findAllByOrderByCounterDesc() {
+        return repository.findAllByOrderByCounterDesc()
                          .stream()
                          .map(BookResponseDTO::new)
                          .collect(Collectors.toList());
@@ -78,6 +79,7 @@ public class BookService {
 
         existingBook.setTitle(bookRequestDTO.getTitle());
         existingBook.setAuthor(bookRequestDTO.getAuthor());
+        existingBook.setLastModifiedDate(LocalDateTime.now());
 
         return new BookResponseDTO(repository.save(existingBook));
     }

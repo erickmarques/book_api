@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "livro")
-@EntityListeners(AuditingEntityListener.class)
 public class Book implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,10 +48,15 @@ public class Book implements Serializable {
     private String author;
 
     /**
+     * Contador do livro, incrementado a cada chamada na API.
+     */
+    @Column(name = "nr_contador")
+    private Long counter = 0L;
+
+    /**
      * Data de criação do registro do livro.
      * Este campo é gerenciado automaticamente e não pode ser atualizado.
      */
-    @CreatedDate
     @Column(name = "dt_criacao", updatable = false)
     private LocalDateTime createdDate;
 
@@ -60,9 +64,9 @@ public class Book implements Serializable {
      * Data de última atualização do registro do livro.
      * Este campo é gerenciado automaticamente.
      */
-    @LastModifiedDate
     @Column(name = "dt_atualizacao")
     private LocalDateTime lastModifiedDate;
+
 
     /**
      * Construtor que cria uma entidade Book a partir de um DTO.
@@ -70,7 +74,19 @@ public class Book implements Serializable {
      * @param dto o DTO contendo os dados do livro.
      */
     public Book(BookRequestDTO dto) {
-        this.title = dto.getTitle();
-        this.author = dto.getAuthor();
+        this.title       = dto.getTitle();
+        this.author      = dto.getAuthor();
+        this.createdDate = LocalDateTime.now();
+    }
+
+    /**
+     * Construtor que cria uma entidade Book a partir dos parametros.
+     *
+     * @param title Título do livro.
+     * * @param author Autor do livro.
+     */
+    public Book(String title, String author) {
+        this.title  = title;
+        this.author = author;
     }
 }

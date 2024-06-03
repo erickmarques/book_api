@@ -19,6 +19,7 @@ public class BookResponseDTO {
     private Long id;
     private String title;
     private String author;
+    private Long counter;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 
@@ -26,6 +27,7 @@ public class BookResponseDTO {
         this.id                 = book.getId();
         this.title              = book.getTitle();
         this.author             = book.getAuthor();
+        this.counter            = book.getCounter();
         this.createdDate        = book.getCreatedDate();
         this.lastModifiedDate   = book.getLastModifiedDate();
     }
