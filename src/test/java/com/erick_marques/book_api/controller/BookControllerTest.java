@@ -36,6 +36,10 @@ public class BookControllerTest {
 
     private final String BASE_URL = "/api/books";
 
+    /**
+     * Teste de integração do GET /api/books
+     * Deve pesquisar todos os livros por ordem do contador descrecente.
+     */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + " - Deve pesquisar todos os livros por ordem do contador descrecente.")
     public void testGetAllBooks_Success() throws Exception {
@@ -51,6 +55,10 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$[0].counter").value(10));
     }
 
+    /**
+     * Teste de integração do GET /api/books/{id}
+     * Deve pesquisar o livro por ID.
+     */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve pesquisar o livro por ID.")
     public void testGetBookById_Success() throws Exception {
@@ -65,6 +73,10 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.counter").value(2));
     }
 
+    /**
+     * Teste de integração do GET /api/books/{id}
+     * Deve retornar NOT FOUND pois o ID não existe.
+     */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
     public void testGetBookById_IdNotFound() throws Exception {
@@ -73,6 +85,10 @@ public class BookControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * Teste de integração do GET /api/books/{id}
+     * Deve retornar BAD REQUEST pois o ID tem valor negativo.
+     */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
     public void testGetBookById_IdNegative() throws Exception {
@@ -81,6 +97,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do POST /api/books
+     * Deve criar um livro.
+     */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve criar um livro.")
     public void testCreateBook_Success() throws Exception{
@@ -99,6 +119,10 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.counter").value(0));
     }
 
+    /**
+     * Teste de integração do POST /api/books
+     * Deve retornar BAD REQUEST pois os campos do livro estão vazios.
+     */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois os campos do livro está vazio.")
     public void testCreateBook_WithFieldsEmpty() throws Exception{
@@ -109,6 +133,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do POST /api/books
+     * Deve retornar BAD REQUEST pois o campo título está vazio.
+     */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois o campo título está vazio.")
     public void testCreateBook_WithTitleEmpty() throws Exception{
@@ -119,6 +147,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do POST /api/books
+     * Deve retornar BAD REQUEST pois o campo autor está vazio.
+     */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois o campo autor está vazio.")
     public void testCreateBook_WithAuthorEmpty() throws Exception{
@@ -129,6 +161,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve atualizar um livro.
+     */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve atualizar um livro.")
     public void testUpdateBook_Success() throws Exception{
@@ -146,6 +182,10 @@ public class BookControllerTest {
                 .andExpect(jsonPath("$.lastModifiedDate").isNotEmpty());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar NOT FOUND pois o ID não existe.
+     */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
     public void testUpdateBook_IdNotFound() throws Exception{
@@ -158,6 +198,10 @@ public class BookControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar BAD REQUEST pois o ID tem valor negativo.
+     */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
     public void testUpdateBook_IdNegative() throws Exception{
@@ -170,6 +214,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar BAD REQUEST pois os campos estão vazios.
+     */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois os campos estão vazios.")
     public void testUpdateBook_WithFieldsEmpty() throws Exception{
@@ -180,6 +228,10 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar BAD REQUEST pois o título está vazio.
+     */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o título está vazio.")
     public void testUpdateBook_WithTitleEmpty() throws Exception{
@@ -190,8 +242,12 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar BAD REQUEST pois o autor está vazio.
+     */
     @Test
-    @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois os campos estão vazios.")
+    @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o autor está vazio.")
     public void testUpdateBook_WithAuthorEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
@@ -200,13 +256,55 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Teste de integração do PUT /api/books/{id}
+     * Deve retornar NO CONTENT após remover o livro.
+     */
+    @Test
+    @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve remover um livro existente.")
+    void testDeleteBook_Success() throws Exception {
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), 2L))
+                .andExpect(status().isNoContent());
+    }
+
+    /**
+     * Teste de integração do DELETE /api/books/{id}
+     * Deve retornar NOT FOUND pois o ID não existe.
+     */
+    @Test
+    @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
+    void testDeleteBook_IdNotFound() throws Exception {
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND))
+                .andExpect(status().isNotFound());
+    }
+
+    /**
+     * Teste de integração do DELETE /api/books/{id}
+     * Deve retornar BAD REQUEST pois o ID tem valor negativo.
+     */
+    @Test
+    @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
+    void testDeleteBook_IdNegative() throws Exception {
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE))
+                .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Retorna o BookRequestDTO apenas com o título preenchido.
+     * 
+     * @return BookRequestDTO
+     */
     private BookRequestDTO createDTOWithTitleEmpty(){
         return new BookRequestDTO(BookUtil.TITLE_DEFAULT, null);
     }
 
+
+    /**
+     * Retorna o BookRequestDTO apenas com o autor preenchido.
+     * 
+     * @return BookRequestDTO
+     */
     private BookRequestDTO createDTOWithAuthorEmpty(){
         return new BookRequestDTO(null, BookUtil.AUTHOR_DEFAULT);
     }
-
-
 }
