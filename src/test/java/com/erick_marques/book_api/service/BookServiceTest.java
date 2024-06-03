@@ -37,8 +37,6 @@ public class BookServiceTest {
     @Autowired
     private MessageSource messageSource;
 
-    private final Long NEGATIVE_ID = BookUtil.ID_NOT_FOUND * -1;
-
     /**
      * Teste para recuperar todos os livros e convertê-los corretamente para BookResponseDTO.
      */
@@ -60,7 +58,12 @@ public class BookServiceTest {
     @Test
     @DisplayName("Teste para recuperar o livros pelo ID e convertê-lo corretamente para BookResponseDTO.")
     public void testGetBookById_Success() {
-        validateEntityToDto(service.getBookById(BookUtil.ID_DEFAULT));
+
+        Book book                = service.getBook(BookUtil.ID_DEFAULT);
+        BookResponseDTO response = service.getBookById(BookUtil.ID_DEFAULT);
+
+        validateEntityToDto(response);
+        assertEquals(response.getCounter(), book.getCounter() + 1); //testa da incrementação do contador.
     }
 
     /**
@@ -83,16 +86,16 @@ public class BookServiceTest {
     @DisplayName("Teste ao realizar uma busca por id inexistente para recuperar a exceção e mensagem.")
     public void testGetBookById_IdNegativo() {
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
-            () -> service.getBookById(NEGATIVE_ID));
+            () -> service.getBookById(BookUtil.ID_NEGATIVE));
 
-        validateExceptionIdBadRequest(exception, NEGATIVE_ID);
+        validateExceptionIdBadRequest(exception, BookUtil.ID_NEGATIVE);
     }
 
     /**
      * Teste para salvar um livro com sucesso e convertê-lo corretamente para BookResponseDTO.
      */
     @Test
-    @DisplayName("Teste para salvar um livro com sucesso e convertê-lo corretamente para BookResponseDTO.")
+    @DisplayName("Teste para criar um livro com sucesso e convertê-lo corretamente para BookResponseDTO.")
     public void testSaveBook_Success() {
         BookRequestDTO request = BookUtil.createBookRequestDtoDefault();
         BookResponseDTO response = service.saveBook(request);
@@ -143,9 +146,9 @@ public class BookServiceTest {
         BookRequestDTO request = new BookRequestDTO();
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
-            () -> service.updateBook(NEGATIVE_ID, request));
+            () -> service.updateBook(BookUtil.ID_NEGATIVE, request));
 
-        validateExceptionIdBadRequest(exception, NEGATIVE_ID);
+        validateExceptionIdBadRequest(exception, BookUtil.ID_NEGATIVE);
     }
 
     /**
@@ -187,9 +190,9 @@ public class BookServiceTest {
     public void testDeleteBook_IdNegative() {
 		
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
-            () -> service.deleteBook(NEGATIVE_ID));
+            () -> service.deleteBook(BookUtil.ID_NEGATIVE));
 
-        validateExceptionIdBadRequest(exception, NEGATIVE_ID);
+        validateExceptionIdBadRequest(exception, BookUtil.ID_NEGATIVE);
     }
 
     /**
@@ -229,7 +232,6 @@ public class BookServiceTest {
         assertEquals(book.getId(),      dto.getId());
         assertEquals(book.getTitle(),   dto.getTitle());
         assertEquals(book.getAuthor(),  dto.getAuthor());
-        assertEquals(book.getCounter(), dto.getCounter());
     }
 
     /**

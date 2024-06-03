@@ -41,7 +41,7 @@ public class BookService {
     }
 
     /**
-     * Recupera um livro pelo seu ID.
+     * Recupera um livro pelo seu ID e incrementar seu contador.
      *
      * @param id o ID do livro a ser recuperado.
      * @return um BookResponseDTO contendo os dados do livro.
@@ -49,7 +49,12 @@ public class BookService {
      */
     public BookResponseDTO getBookById(Long id) {
         validateId(id);
-        return new BookResponseDTO(getBook(id));
+
+        Book book = getBook(id);
+        book.setCounter(book.getCounter() + 1); //incrementando contador
+        repository.save(book);
+
+        return new BookResponseDTO(book);
     }
 
     /**

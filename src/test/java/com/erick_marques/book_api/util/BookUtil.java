@@ -9,6 +9,7 @@ import com.erick_marques.book_api.entity.Book;
 public class BookUtil {
 
     public static final Long ID_DEFAULT       = 1L;
+    public static final Long ID_NEGATIVE      = -9999L;
     public static final Long ID_NOT_FOUND     = 99999L;
     public static final String TITLE_DEFAULT  = "Pai Rico, Pai Pobre";
     public static final String AUTHOR_DEFAULT = "Robert Kiyosaki";
