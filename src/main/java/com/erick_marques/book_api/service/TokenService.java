@@ -55,12 +55,10 @@ public class TokenService {
      * @throws JWTVerificationException se o token for inválido ou a verificação falhar
      */
     public String getSubject(String token) {
-
-           return JWT.require(Algorithm.HMAC256(jwtProperties.getSecret()))
-                    .withIssuer("BookAPI")
-                    .build()
-                    .verify(token)
-                    .getSubject();
-        
+        return JWT.require(Algorithm.HMAC256(jwtProperties.getSecret()))
+                .withIssuer("BookAPI")
+                .build()
+                .verify(token)
+                .getSubject();
     }
 }
