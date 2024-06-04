@@ -18,7 +18,7 @@ public class TokenResponseDTO {
     public TokenResponseDTO(String token){
         this.token     = token;
         this.type      = "Bearer";
-        this.expiresIn = 100L;
+        this.expiresIn = 3600L;
         this.issuedAt  = LocalDateTime.now();
     }
 }

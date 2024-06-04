@@ -2,6 +2,7 @@ package com.erick_marques.book_api.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erick_marques.book_api.dto.BookRequestDTO;
 import com.erick_marques.book_api.dto.BookResponseDTO;
+import com.erick_marques.book_api.dto.GoogleBooksResponseDTO;
+import com.erick_marques.book_api.feign.GoogleBooksClient;
 import com.erick_marques.book_api.service.BookService;
 
 import jakarta.validation.Valid;
@@ -29,6 +33,10 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
     private final BookService bookService;
+    private final GoogleBooksClient googleBooksClient;
+
+    @Value("${google.api.key}")
+    private String apiKey = "oi";
 
     /**
      * Recupera todos os livros.
@@ -88,5 +96,16 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /*
+     * Pesquisa livros a partir do título na API Google Books.
+     * 
+     * @param title o título de pesquisa do livro.
+     * @return uma ResponseEntity contendo o GoogleBooksResponseDTO e HttpStatus OK.
+     */
+    @GetMapping("/google-books")
+    public GoogleBooksResponseDTO getBookByIsbn(@RequestParam String title) {
+        return googleBooksClient.searchBooks(title, apiKey);
     }
 }
