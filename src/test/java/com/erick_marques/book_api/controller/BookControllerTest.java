@@ -1,14 +1,17 @@
 package com.erick_marques.book_api.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.erick_marques.book_api.dto.BookRequestDTO;
 import com.erick_marques.book_api.util.BookUtil;
@@ -26,6 +29,7 @@ import static org.hamcrest.Matchers.hasSize;
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Testes para o controller de Book")
+@Transactional
 public class BookControllerTest {
     
     @Autowired
@@ -36,6 +40,16 @@ public class BookControllerTest {
 
     private final String BASE_URL = "/api/books";
 
+    private String token;
+
+    /**
+     * Configura o ambiente de teste antes de cada teste.
+     */
+    @BeforeEach
+    void setUp() {
+        token = BookUtil.getToken(mockMvc, objectMapper);
+    }
+
     /**
      * Teste de integração do GET /api/books
      * Deve pesquisar todos os livros por ordem do contador descrecente.
@@ -44,7 +58,8 @@ public class BookControllerTest {
     @DisplayName("Teste de integração do GET " + BASE_URL + " - Deve pesquisar todos os livros por ordem do contador descrecente.")
     public void testGetAllBooks_Success() throws Exception {
 
-        mockMvc.perform(get(BASE_URL))
+        mockMvc.perform(get(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(10))))
                 .andExpect(jsonPath("$[0].id").isNotEmpty())
@@ -63,7 +78,8 @@ public class BookControllerTest {
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve pesquisar o livro por ID.")
     public void testGetBookById_Success() throws Exception {
 
-        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT))
+        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.title").value("The Pragmatic Programmer"))
@@ -81,7 +97,8 @@ public class BookControllerTest {
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
     public void testGetBookById_IdNotFound() throws Exception {
 
-        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND))
+        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
 
@@ -93,7 +110,8 @@ public class BookControllerTest {
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
     public void testGetBookById_IdNegative() throws Exception {
 
-        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE))
+        mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
 
@@ -108,6 +126,7 @@ public class BookControllerTest {
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
         mockMvc.perform(post(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isCreated())
@@ -128,6 +147,7 @@ public class BookControllerTest {
     public void testCreateBook_WithFieldsEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new BookRequestDTO())))
                 .andExpect(status().isBadRequest());
@@ -142,6 +162,7 @@ public class BookControllerTest {
     public void testCreateBook_WithTitleEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDTOWithTitleEmpty())))
                 .andExpect(status().isBadRequest());
@@ -156,6 +177,7 @@ public class BookControllerTest {
     public void testCreateBook_WithAuthorEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDTOWithAuthorEmpty())))
                 .andExpect(status().isBadRequest());
@@ -172,6 +194,7 @@ public class BookControllerTest {
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
@@ -193,6 +216,7 @@ public class BookControllerTest {
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isNotFound());
@@ -209,6 +233,7 @@ public class BookControllerTest {
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isBadRequest());
@@ -223,6 +248,7 @@ public class BookControllerTest {
     public void testUpdateBook_WithFieldsEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new BookRequestDTO())))
                 .andExpect(status().isBadRequest());
@@ -237,6 +263,7 @@ public class BookControllerTest {
     public void testUpdateBook_WithTitleEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDTOWithTitleEmpty())))
                 .andExpect(status().isBadRequest());
@@ -251,6 +278,7 @@ public class BookControllerTest {
     public void testUpdateBook_WithAuthorEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createDTOWithAuthorEmpty())))
                 .andExpect(status().isBadRequest());
@@ -263,7 +291,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve remover um livro existente.")
     void testDeleteBook_Success() throws Exception {
-        mockMvc.perform(delete(BASE_URL.concat("/{id}"), 2L))
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), 2L)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNoContent());
     }
 
@@ -274,7 +303,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
     void testDeleteBook_IdNotFound() throws Exception {
-        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND))
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
 
@@ -285,7 +315,8 @@ public class BookControllerTest {
     @Test
     @DisplayName("Teste de integração do DELETE " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
     void testDeleteBook_IdNegative() throws Exception {
-        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE))
+        mockMvc.perform(delete(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isBadRequest());
     }
 

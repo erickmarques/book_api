@@ -1,10 +1,16 @@
 package com.erick_marques.book_api.util;
 
-import java.time.LocalDateTime;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.erick_marques.book_api.dto.BookRequestDTO;
-import com.erick_marques.book_api.dto.BookResponseDTO;
+import com.erick_marques.book_api.dto.LoginRequestDTO;
 import com.erick_marques.book_api.entity.Book;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 public class BookUtil {
 
@@ -21,11 +27,28 @@ public class BookUtil {
     public static BookRequestDTO createBookRequestDtoDefault(){
         return new BookRequestDTO(TITLE_DEFAULT, AUTHOR_DEFAULT);
     }
-
-    public static BookResponseDTO createBookResponseDtoDefault(){
-        return new BookResponseDTO(ID_DEFAULT, TITLE_DEFAULT, AUTHOR_DEFAULT, 0L, LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+    
+    public static String getToken(MockMvc mockMvc, ObjectMapper objectMapper) {
+        try {
+            MvcResult result = mockMvc.perform(post("/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(createLoginDefault())))
+                    .andReturn();
+            
+            String jsonResponse = result.getResponse().getContentAsString();
+            
+            JsonNode jsonNode = objectMapper.readTree(jsonResponse);
+            String token = jsonNode.get("token").asText();
+    
+            return token;
+        } catch (Exception e) {
+            return null;
+        }
     }
     
 
+    public static LoginRequestDTO createLoginDefault(){
+        return new LoginRequestDTO("erick.marques.andrade@gmail.com", "123");
+    }
     
 }

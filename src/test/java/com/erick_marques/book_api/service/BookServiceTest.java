@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erick_marques.book_api.dto.BookRequestDTO;
@@ -29,6 +30,7 @@ import java.util.Locale;
  */
 @SpringBootTest
 @DisplayName("Testes para o serviço de Book")
+@Transactional
 public class BookServiceTest {
 
     @Autowired
@@ -56,14 +58,15 @@ public class BookServiceTest {
      * Teste para recuperar um livro pelo ID e convertê-lo corretamente para BookResponseDTO.
      */
     @Test
-    @DisplayName("Teste para recuperar o livros pelo ID e convertê-lo corretamente para BookResponseDTO.")
+    @DisplayName("Teste para recuperar o livros pelo ID e convertê-lo corretamente para BookResponseDTO.")    
     public void testGetBookById_Success() {
 
         Book book                = service.getBook(BookUtil.ID_DEFAULT);
+        Long bookCounter         = book.getCounter();
         BookResponseDTO response = service.getBookById(BookUtil.ID_DEFAULT);
 
         validateEntityToDto(response);
-        assertEquals(response.getCounter(), book.getCounter() + 1); //testa da incrementação do contador.
+        assertEquals(response.getCounter(), bookCounter + 1); //testa da incrementação do contador.
     }
 
     /**
