@@ -4,76 +4,69 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
-import lombok.RequiredArgsConstructor;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
  * Classe para tratamento global de exceções na aplicação.
  */
 @RestControllerAdvice
-@RequiredArgsConstructor
 public class ApplicationControllerAdvice {
 
-    private final MessageSource messageSource;
-
-    /**
-     * Método para lidar com exceções de validação.
-     *
-     * @param ex a exceção do tipo MethodArgumentNotValidException.
-     * @return um objeto ApiErrors contendo os erros de validação.
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleValidationErrors(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-        List<String> errors = bindingResult.getAllErrors()
-                .stream()
-                .map(obj -> obj.getDefaultMessage())
-                .collect(Collectors.toList());
-        return new ApiErrors(errors);
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiErrors handleUsernameNotFoundException(UsernameNotFoundException ex, HttpServletRequest request) {
+        String errorMessage = ex.getMessage();
+        return new ApiErrors(LocalDateTime.now().toString(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.toString(), errorMessage, request.getRequestURI());
     }
 
-    /**
-     * Método para lidar com exceções de status de resposta.
-     *
-     * @param ex a exceção do tipo ResponseStatusException.
-     * @return uma resposta com o status de erro e a mensagem fornecida pela exceção.
-     */
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiErrors handleBadCredentialsException(BadCredentialsException ex, HttpServletRequest request) {
+        String errorMessage = "Login/senha inválidos!";
+        return new ApiErrors(LocalDateTime.now().toString(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.toString(), errorMessage, request.getRequestURI());
+    }
+
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ApiErrors> handleResponseStatusException(ResponseStatusException ex) {
+    public ResponseEntity<ApiErrors> handleResponseStatusException(ResponseStatusException ex, HttpServletRequest request) {
         String errorMessage = ex.getReason();
         HttpStatusCode statusCode = ex.getStatusCode();
-        ApiErrors apiErrors = new ApiErrors(errorMessage);
+
+        ApiErrors apiErrors = new ApiErrors(LocalDateTime.now().toString(), statusCode.value(), statusCode.toString(), errorMessage, request.getRequestURI());
         return new ResponseEntity<>(apiErrors, statusCode);
     }
 
-
-    @ExceptionHandler({UserIvalidException.class})
-    public ResponseEntity<UserInvalid> handleUserIvalidException(RuntimeException ex) {
-        UserInvalid restError = new UserInvalid(getMessage("user.loginInvalid"));
-        return new ResponseEntity<>(restError, HttpStatus.FORBIDDEN);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
+        List<String> errors = bindingResult.getAllErrors()
+                .stream()
+                .map(ObjectError::getDefaultMessage)
+                .collect(Collectors.toList());
+        return new ApiErrors(LocalDateTime.now().toString(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.toString(), String.join(", ", errors), request.getRequestURI());
     }
 
-
-    /**
-     * Recupera uma mensagem localizada para o código e argumentos fornecidos.
-     *
-     * @param code o código da mensagem.
-     * @param args os argumentos para a mensagem.
-     * @return a mensagem localizada.
-     */
-    private String getMessage(String code) {
-        return messageSource.getMessage(code, null, Locale.getDefault());
+    @ExceptionHandler(TokenExpiredException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiErrors handleTokenExpiredException(TokenExpiredException ex, HttpServletRequest request) {
+        String errorMessage = "Token expirado!";
+        return new ApiErrors(LocalDateTime.now().toString(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.toString(), errorMessage, request.getRequestURI());
     }
 
 }

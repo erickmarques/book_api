@@ -30,6 +30,7 @@ public class FilterToken extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+            
         String token;
 
         var authorizationHeader = request.getHeader("Authorization");
