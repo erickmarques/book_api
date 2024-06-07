@@ -6,7 +6,6 @@ Book API é uma API simples de cadastro de livros que integra com a Google Book 
 
 - [Descrição](#descrição)
 - [Instalação](#instalação)
-- [Configuração](#configuração)
 - [Uso](#uso)
 - [Arquitetura](#arquitetura)
 - [Contribuição](#contribuição)
@@ -42,37 +41,49 @@ O projeto Book API permite o cadastro, atualização, remoção e consulta de li
 4. Compile e rode a aplicação:
     ```sh
     ./gradlew bootRun
-    ```
 
-## Configuração
+## Uso
 
-### Variáveis de Ambiente
+### Endpoints Disponíveis
 
-- `EUREKA_SERVER_URL`: URL do servidor Eureka (default: `http://localhost:8761/eureka`)
-- `JWT_SECRET`: Segredo utilizado para assinar o token JWT
+- `POST /login`: Gera um token JWT após autenticação bem-sucedida.
+- `POST /api/books`: Cria um novo livro.
+- `PUT /api/books/{id}`: Atualiza um livro.
+- `DELETE /api/books/{id}`: Deleta um livro.
+- `GET /api/books`: Lista todos os livros.
+- `GET /api/books/{id}`: Obtém detalhes de um livro específico (ao pesquisar um livro pelo ID, o contador é incrementado).
+- `GET /api/books/google-books`: Pesquisa na Google Book API.
 
-### Arquivo de Configuração
+### Exemplos de Uso
 
-Certifique-se de que os arquivos `application.properties` ou `application.yml` estejam configurados corretamente. Exemplo de `application.properties`:
+#### Autenticação e Geração de Token
 
-```properties
-spring.application.name=book-api
-server.port=8080
+```sh
+curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"username": "user", "password": "password"}'
+ ```
 
-# Eureka
-eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+ ```sh
+ curl -X POST http://localhost:8080/api/books -H "Authorization: Bearer <seu_token_jwt>" -H "Content-Type: application/json" -d '{"title": "Spring in Action", "author": "Craig Walls"}'
+  ```
 
-# Segurança
-spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8081/realms/mscourserealm
-jwt.secret=my-secret-key
+## Arquitetura
 
-# H2 Database
-spring.datasource.url=jdbc:h2:mem:bookdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+### Diagrama
 
-# Flyway
-spring.flyway.enabled=true
-spring.flyway.locations=classpath:db/migration
+![Arquitetura do Sistema](link-para-diagrama.png)
+
+### Descrição
+
+- **Book API**: Microserviço para gerenciar operações de cadastro de livros e integração com a Google Book API.
+- **Eureka Server**: Serve como servidor de descoberta de serviços.
+- **Gateway**: Utilizado para rotear requisições para os microserviços apropriados.
+
+
+## Autores e Agradecimentos
+
+- **Erick Marques** - *Desenvolvedor Principal*
+
+Fique à vontade para contribuir com este projeto.
+
+
+
