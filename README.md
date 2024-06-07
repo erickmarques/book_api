@@ -65,9 +65,6 @@ curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d 
 
 ## Arquitetura
 
-
-### Descrição
-
 - **Book API**: Microserviço para gerenciar operações de cadastro de livros e integração com a Google Book API.
 - **Eureka Server**: Serve como servidor de descoberta de serviços.
 - **Gateway**: Utilizado para rotear requisições para os microserviços apropriados.
