@@ -23,6 +23,7 @@ import com.erick_marques.book_api.service.BookService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controlador para gerenciar livros.
@@ -36,7 +37,7 @@ public class BookController {
     private final GoogleBooksClient googleBooksClient;
 
     @Value("${google.api.key}")
-    private String apiKey = "oi";
+    private String apiKey;
 
     /**
      * Recupera todos os livros.
