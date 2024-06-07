@@ -8,9 +8,6 @@ Book API é uma API simples de cadastro de livros que integra com a Google Book 
 - [Instalação](#instalação)
 - [Uso](#uso)
 - [Arquitetura](#arquitetura)
-- [Contribuição](#contribuição)
-- [Licença](#licença)
-- [Autores e Agradecimentos](#autores-e-agradecimentos)
 
 ## Descrição
 
@@ -68,20 +65,12 @@ curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d 
 
 ## Arquitetura
 
-### Diagrama
-
-![Arquitetura do Sistema](link-para-diagrama.png)
 
 ### Descrição
 
 - **Book API**: Microserviço para gerenciar operações de cadastro de livros e integração com a Google Book API.
 - **Eureka Server**: Serve como servidor de descoberta de serviços.
 - **Gateway**: Utilizado para rotear requisições para os microserviços apropriados.
-
-
-## Autores e Agradecimentos
-
-- **Erick Marques** - *Desenvolvedor Principal*
 
 Fique à vontade para contribuir com este projeto.
 
