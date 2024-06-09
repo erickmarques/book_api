@@ -23,7 +23,6 @@ import com.erick_marques.book_api.service.BookService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controlador para gerenciar livros.

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,6 +13,7 @@ import com.erick_marques.book_api.dto.BookResponseDTO;
 import com.erick_marques.book_api.entity.Book;
 import com.erick_marques.book_api.util.BookUtil;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,28 +23,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Testes para o serviço de Book.
+ * Classe de teste para {@link BookService}.
  */
 @SpringBootTest
 @DisplayName("Testes para o serviço de Book")
 @Transactional
-public class BookServiceTest {
+class BookServiceTest {
 
     @Autowired
     private BookService service;
 
     @Autowired
-    private MessageSource messageSource;
+    private MessageService messageService;
 
     /**
      * Teste para recuperar todos os livros e convertê-los corretamente para BookResponseDTO.
      */
     @Test
     @DisplayName("Teste para recuperar todos os livros e convertê-los corretamente para BookResponseDTO.")
-    public void testFindAllByOrderByCounterDesc() {
+    void testFindAllByOrderByCounterDesc() {
         List<BookResponseDTO> booksDto = service.findAllByOrderByCounterDesc();
 
         assertFalse(booksDto.isEmpty(), "A lista de livros não deve ser vazia");
@@ -59,7 +58,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para recuperar o livros pelo ID e convertê-lo corretamente para BookResponseDTO.")    
-    public void testGetBookById_Success() {
+    void testGetBookById_Success() {
 
         Book book                = service.getBook(BookUtil.ID_DEFAULT);
         Long bookCounter         = book.getCounter();
@@ -74,7 +73,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste ao realizar uma busca por id inexistente para recuperar a exceção e mensagem.")
-    public void testGetBookById_IdNotFound() {
+    void testGetBookById_IdNotFound() {
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
             () -> service.getBookById(BookUtil.ID_NOT_FOUND));
@@ -87,7 +86,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste ao realizar uma busca por id inexistente para recuperar a exceção e mensagem.")
-    public void testGetBookById_IdNegativo() {
+    void testGetBookById_IdNegativo() {
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
             () -> service.getBookById(BookUtil.ID_NEGATIVE));
 
@@ -99,7 +98,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para criar um livro com sucesso e convertê-lo corretamente para BookResponseDTO.")
-    public void testSaveBook_Success() {
+    void testSaveBook_Success() {
         BookRequestDTO request = BookUtil.createBookRequestDtoDefault();
         BookResponseDTO response = service.saveBook(request);
 
@@ -112,7 +111,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para atualizar um livro com sucesso e convertê-lo corretamente para BookResponseDTO.")
-    public void testUpdateBook_Success() {
+    void testUpdateBook_Success() {
 
         BookRequestDTO request = BookUtil.createBookRequestDtoDefault();
         BookResponseDTO response = service.updateBook(BookUtil.ID_DEFAULT, request);
@@ -129,7 +128,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste ao realizar um update por id inexistente para recuperar a exceção e mensagem.")
-    public void testUpdateBook_IdNotFound() {
+    void testUpdateBook_IdNotFound() {
 
         BookRequestDTO request = new BookRequestDTO();
 
@@ -144,7 +143,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste ao realizar um update por id com valor negativo para recuperar a exceção e mensagem.")
-    public void testUpdateBook_IdNegative() {
+    void testUpdateBook_IdNegative() {
 
         BookRequestDTO request = new BookRequestDTO();
 
@@ -159,7 +158,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para deletar um livro com sucesso.")
-    public void testDeleteBook_Success() {
+    void testDeleteBook_Success() {
 
         Long validId = 2L;
         service.deleteBook(validId);
@@ -168,7 +167,7 @@ public class BookServiceTest {
             () -> service.getBook(validId));
 
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(exception.getReason()).isEqualTo(getMessage("book.notFound", validId));
+        assertThat(exception.getReason()).isEqualTo(messageService.getMessage("book.notFound", validId));
     }
 
     /**
@@ -176,7 +175,7 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para deletar um livro com ID inexistente.")
-    public void testDeleteBook_IdNotFound() {
+    void testDeleteBook_IdNotFound() {
 		
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
             () -> service.deleteBook(BookUtil.ID_NOT_FOUND));
@@ -190,11 +189,45 @@ public class BookServiceTest {
      */
     @Test
     @DisplayName("Teste para deletar um livro com ID com valor negativo.")
-    public void testDeleteBook_IdNegative() {
+    void testDeleteBook_IdNegative() {
 		
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
             () -> service.deleteBook(BookUtil.ID_NEGATIVE));
 
+        validateExceptionIdBadRequest(exception, BookUtil.ID_NEGATIVE);
+    }
+
+    /**
+     * Teste para validar o método validateID com sucesso.
+     */
+    @Test
+    @DisplayName("Teste para validar o método validateID com sucesso.")
+    void testValidateId_Success(){
+        assertDoesNotThrow(() -> service.validateId(BookUtil.ID_DEFAULT));
+    }
+
+    /**
+     * Teste para validar o método validateID com ID nulo.
+     */
+    @Test
+    @DisplayName("Teste para validar o método validateID com ID nulo.")
+    void testValidateId_IdNull() {
+
+        Long id = null;
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> service.validateId(id));
+        
+        validateExceptionIdBadRequest(exception, id);
+    }
+
+    /**
+     * Teste para validar o método validateID com ID negativo.
+     */
+    @Test
+    @DisplayName("Teste para validar o método validateID com ID negativo.")
+    void testValidateId_IdNegative() {
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> service.validateId(BookUtil.ID_NEGATIVE));
+        
         validateExceptionIdBadRequest(exception, BookUtil.ID_NEGATIVE);
     }
 
@@ -205,18 +238,18 @@ public class BookServiceTest {
      */
     private void validateExceptionIdNotFound(ResponseStatusException exception) {
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(exception.getReason()).isEqualTo(getMessage("book.notFound", BookUtil.ID_NOT_FOUND));
+        assertThat(exception.getReason()).isEqualTo(messageService.getMessage("book.notFound", String.valueOf(BookUtil.ID_NOT_FOUND)));
     }
 
     /**
      * Valida a exceção de ID inválido.
      *
      * @param exception a exceção lançada.
-     * @param negativeId o ID negativo.
+     * @param negativeId o ID negativo ou nulo.
      */
     private void validateExceptionIdBadRequest(ResponseStatusException exception, Long negativeId) {
         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(exception.getReason()).isEqualTo(getMessage("book.id.invalid", negativeId));
+        assertThat(exception.getReason()).isEqualTo(messageService.getMessage("book.id.invalid", String.valueOf(negativeId)));
     }
 
 
@@ -235,16 +268,5 @@ public class BookServiceTest {
         assertEquals(book.getId(),      dto.getId());
         assertEquals(book.getTitle(),   dto.getTitle());
         assertEquals(book.getAuthor(),  dto.getAuthor());
-    }
-
-    /**
-     * Recupera uma mensagem localizada para o código e argumentos fornecidos.
-     *
-     * @param code o código da mensagem.
-     * @param args os argumentos para a mensagem.
-     * @return a mensagem localizada.
-     */
-    private String getMessage(String code, Object... args) {
-        return messageSource.getMessage(code, args, Locale.getDefault());
     }
 }

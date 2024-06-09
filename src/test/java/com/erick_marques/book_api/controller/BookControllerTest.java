@@ -23,14 +23,14 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 
 /**
- * Classe de teste de integração do Controlador Book.
+ * Classe de teste para {@link BookController}.
  */
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Testes para o controller de Book")
 @Transactional
-public class BookControllerTest {
+class BookControllerTest {
     
     @Autowired
     private MockMvc mockMvc;
@@ -56,7 +56,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + " - Deve pesquisar todos os livros por ordem do contador descrecente.")
-    public void testGetAllBooks_Success() throws Exception {
+    void testGetAllBooks_Success() throws Exception {
 
         mockMvc.perform(get(BASE_URL)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -76,7 +76,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve pesquisar o livro por ID.")
-    public void testGetBookById_Success() throws Exception {
+    void testGetBookById_Success() throws Exception {
 
         mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -95,7 +95,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
-    public void testGetBookById_IdNotFound() throws Exception {
+    void testGetBookById_IdNotFound() throws Exception {
 
         mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NOT_FOUND)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -108,7 +108,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do GET " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
-    public void testGetBookById_IdNegative() throws Exception {
+    void testGetBookById_IdNegative() throws Exception {
 
         mockMvc.perform(get(BASE_URL.concat("/{id}"), BookUtil.ID_NEGATIVE)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -121,7 +121,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve criar um livro.")
-    public void testCreateBook_Success() throws Exception{
+    void testCreateBook_Success() throws Exception{
 
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
@@ -144,7 +144,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois os campos do livro está vazio.")
-    public void testCreateBook_WithFieldsEmpty() throws Exception{
+    void testCreateBook_WithFieldsEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -159,7 +159,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois o campo título está vazio.")
-    public void testCreateBook_WithTitleEmpty() throws Exception{
+    void testCreateBook_WithTitleEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -174,7 +174,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve retornar BAD REQUEST pois o campo autor está vazio.")
-    public void testCreateBook_WithAuthorEmpty() throws Exception{
+    void testCreateBook_WithAuthorEmpty() throws Exception{
 
         mockMvc.perform(post(BASE_URL)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -189,7 +189,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do POST " + BASE_URL + " - Deve atualizar um livro.")
-    public void testUpdateBook_Success() throws Exception{
+    void testUpdateBook_Success() throws Exception{
 
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
@@ -211,7 +211,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar NOT FOUND pois o ID não existe.")
-    public void testUpdateBook_IdNotFound() throws Exception{
+    void testUpdateBook_IdNotFound() throws Exception{
 
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
@@ -228,7 +228,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o ID tem valor negativo.")
-    public void testUpdateBook_IdNegative() throws Exception{
+    void testUpdateBook_IdNegative() throws Exception{
 
         BookRequestDTO requestDTO = BookUtil.createBookRequestDtoDefault();
 
@@ -245,7 +245,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois os campos estão vazios.")
-    public void testUpdateBook_WithFieldsEmpty() throws Exception{
+    void testUpdateBook_WithFieldsEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -260,7 +260,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o título está vazio.")
-    public void testUpdateBook_WithTitleEmpty() throws Exception{
+    void testUpdateBook_WithTitleEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -275,7 +275,7 @@ public class BookControllerTest {
      */
     @Test
     @DisplayName("Teste de integração do PUT " + BASE_URL + "/{id} - Deve retornar BAD REQUEST pois o autor está vazio.")
-    public void testUpdateBook_WithAuthorEmpty() throws Exception{
+    void testUpdateBook_WithAuthorEmpty() throws Exception{
 
         mockMvc.perform(put(BASE_URL.concat("/{id}"), BookUtil.ID_DEFAULT)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)

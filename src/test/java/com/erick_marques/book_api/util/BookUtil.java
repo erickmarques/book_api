@@ -19,6 +19,9 @@ public class BookUtil {
     public static final Long ID_NOT_FOUND     = 99999L;
     public static final String TITLE_DEFAULT  = "Pai Rico, Pai Pobre";
     public static final String AUTHOR_DEFAULT = "Robert Kiyosaki";
+    public static final String EMAIL_DEFAULT  = "erick.marques.andrade@gmail.com";
+    public static final String PASS_DEFAULT   = "123";
+
 
     public static Book createBookDefault(){
         return new Book(TITLE_DEFAULT, AUTHOR_DEFAULT);
@@ -48,7 +51,7 @@ public class BookUtil {
     
 
     public static LoginRequestDTO createLoginDefault(){
-        return new LoginRequestDTO("erick.marques.andrade@gmail.com", "123");
+        return new LoginRequestDTO(EMAIL_DEFAULT, PASS_DEFAULT);
     }
     
 }

@@ -13,11 +13,11 @@ import com.erick_marques.book_api.entity.Book;
 import java.util.List;
 
 /**
- * Classe de teste para o repositório de Book.
+ * Classe de teste para {@link BookRepository}.
  */
 @DataJpaTest
 @DisplayName("Testes do Repositório Book")
-public class BookRepositoryTest {
+class BookRepositoryTest {
 
     @Autowired
     private BookRepository repository;
@@ -27,7 +27,7 @@ public class BookRepositoryTest {
      */
     @Test
     @DisplayName("Teste para pesquisar por ordem do contador descrente todos os livros")
-    public void testFindAllByOrderByCounterDesc(){
+    void testFindAllByOrderByCounterDesc(){
         List<Book> books = repository.findAllByOrderByCounterDesc();
 
         // Verificação

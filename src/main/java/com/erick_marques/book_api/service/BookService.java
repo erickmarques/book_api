@@ -1,6 +1,5 @@
 package com.erick_marques.book_api.service;
 
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * Classe de serviço para gerenciar livros.
@@ -26,7 +23,7 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final BookRepository repository;
-    private final MessageSource messageSource;
+    private final MessageService messageService;
 
     /**
      * Recupera todos os livros do repositório.
@@ -37,7 +34,7 @@ public class BookService {
         return repository.findAllByOrderByCounterDesc()
                          .stream()
                          .map(BookResponseDTO::new)
-                         .collect(Collectors.toList());
+                         .toList();
     }
 
     /**
@@ -110,19 +107,9 @@ public class BookService {
      */
     public Book getBook(Long id) {
         return repository.findById(id)
-                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("book.notFound", id)));
+                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, messageService.getMessage("book.notFound", String.valueOf(id))));
     }
 
-    /**
-     * Recupera uma mensagem localizada para o código e argumentos fornecidos.
-     *
-     * @param code o código da mensagem.
-     * @param args os argumentos para a mensagem.
-     * @return a mensagem localizada.
-     */
-    private String getMessage(String code, Object... args) {
-        return messageSource.getMessage(code, args, Locale.getDefault());
-    }
 
     /**
      * Valida o ID do livro fornecido.
@@ -130,9 +117,9 @@ public class BookService {
      * @param id o ID a ser validado.
      * @throws ResponseStatusException se o ID for nulo ou inválido.
      */
-    private void validateId(Long id) {
+    public void validateId(Long id) {
         if (id == null || id <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, getMessage("book.id.invalid", id));
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, messageService.getMessage("book.id.invalid", String.valueOf(id)));
         }
     }
 
