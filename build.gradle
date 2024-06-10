@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id 'org.sonarqube' version '5.0.0.4638'
+	id 'jacoco'
 }
 
 group = 'com.erick_marques'
@@ -63,7 +64,43 @@ dependencyManagement {
 	}
 }
 
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // Gera o relatório do Jacoco após os testes
+}
 
-tasks.named('test') {
-	useJUnitPlatform()
+test {
+    jacoco {
+        enabled = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.8
+            }
+        }
+    }
+}
+
+tasks.withType(Test).configureEach {
+    jacoco {
+        excludes += ['com.erick_marques.book_api.config.*',
+                     'com.erick_marques.book_api.dto.*',
+					 'com.erick_marques.book_api.entity.*',
+					 'com.erick_marques.book_api.feign.*',
+                     'com.erick_marques.book_api.exception.*']
+
+    }
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "book_api"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.login", "sqp_6904d5be60e8ced3f9375a5424f7738b78db57f7"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
