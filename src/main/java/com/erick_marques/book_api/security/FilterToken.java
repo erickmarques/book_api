@@ -9,6 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.erick_marques.book_api.entity.User;
 import com.erick_marques.book_api.repository.UserRepository;
+import com.erick_marques.book_api.service.MessageService;
 import com.erick_marques.book_api.service.TokenService;
 
 import jakarta.servlet.FilterChain;
@@ -25,6 +26,7 @@ public class FilterToken extends OncePerRequestFilter {
 
     private final TokenService tokenService;
     private final UserRepository repository;
+    private final MessageService messageService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,7 +42,7 @@ public class FilterToken extends OncePerRequestFilter {
             String subject = this.tokenService.getSubject(token);
 
             User user = this.repository.findByLogin(subject)
-                                .orElseThrow(() -> new UsernameNotFoundException("Login/Senha inválidos!"));
+                                .orElseThrow(() -> new UsernameNotFoundException(messageService.getMessage("user.loginInvalid")));
 
             var authentication = new UsernamePasswordAuthenticationToken(user,
                     null, user.getAuthorities());
