@@ -69,6 +69,7 @@ test {
     finalizedBy jacocoTestReport // Gera o relatório do Jacoco após os testes
 }
 
+
 test {
     jacoco {
         enabled = true
@@ -91,8 +92,16 @@ tasks.withType(Test).configureEach {
                      'com.erick_marques.book_api.dto.*',
 					 'com.erick_marques.book_api.entity.*',
 					 'com.erick_marques.book_api.feign.*',
+					 'com.erick_marques.book_api.security.*',
                      'com.erick_marques.book_api.exception.*']
+    }
+}
 
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
 }
 
@@ -100,7 +109,8 @@ sonarqube {
     properties {
         property "sonar.projectKey", "book_api"
         property "sonar.host.url", "http://localhost:9000"
-        property "sonar.login", "sqp_6904d5be60e8ced3f9375a5424f7738b78db57f7"
+        property "sonar.token", "sqp_6904d5be60e8ced3f9375a5424f7738b78db57f7"
+		property "sonar.jacoco.reportPaths", "build/jacoco/test.exec"
         property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
 }

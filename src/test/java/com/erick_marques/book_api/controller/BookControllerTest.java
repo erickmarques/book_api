@@ -320,6 +320,22 @@ class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    /**
+     * Teste de integração do DELETE /api/books/google-books?title=Harry Potter
+     * Deve retornar todos os livros que tem o título Harry Potter
+     */
+    @Test
+    @DisplayName("Teste de integração do GET " + BASE_URL + "/google-books?title=Harry Potter - Deve retornar a pesquisar na API Google Books com sucesso.")
+    void testSearchBooks_Success() throws Exception {
+        String title = "Harry Potter";
+
+        mockMvc.perform(get(BASE_URL.concat("/google-books"))
+                .param("title", title)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk());
+    }
+
     /**
      * Retorna o BookRequestDTO apenas com o título preenchido.
      * 

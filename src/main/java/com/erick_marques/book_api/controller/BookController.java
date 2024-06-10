@@ -105,7 +105,7 @@ public class BookController {
      * @return uma ResponseEntity contendo o GoogleBooksResponseDTO e HttpStatus OK.
      */
     @GetMapping("/google-books")
-    public GoogleBooksResponseDTO getBookByIsbn(@RequestParam String title) {
+    public GoogleBooksResponseDTO searchBooks(@RequestParam String title) {
         return googleBooksClient.searchBooks(title, apiKey);
     }
 }
