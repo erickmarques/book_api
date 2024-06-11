@@ -10,10 +10,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableFeignClients
 @EnableDiscoveryClient
-public class BookApiApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BookApiApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }
