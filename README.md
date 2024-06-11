@@ -19,7 +19,7 @@ O projeto Book API permite o cadastro, atualização, remoção e consulta de li
 
 - [Java 17+](https://adoptopenjdk.net/)
 - [Gradle 7.5+](https://gradle.org/)
-- [Docker](https://www.docker.com/) (opcional para rodar o Eureka Server)
+- [Docker](https://www.docker.com/)
 
 ### Passos para Instalação
 
