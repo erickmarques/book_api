@@ -23,6 +23,8 @@ O projeto Book API permite o cadastro, atualização, remoção e consulta de li
 
 ### Passos para Instalação
 
+#### Método 1: Usando Java
+
 1. Clone o repositório:
     ```sh
     git clone https://github.com/seu-usuario/book-api.git
@@ -38,6 +40,23 @@ O projeto Book API permite o cadastro, atualização, remoção e consulta de li
 4. Compile e rode a aplicação:
     ```sh
     ./gradlew bootRun
+	
+#### Método 2: Usando Docker
+
+1. Certifique-se de que a rede Docker foi criada:
+    ```sh
+    docker network create book-network
+    ```
+
+2. Construa a imagem Docker da Book API:
+    ```sh
+    docker build --tag book-api .
+    ```
+
+3. Rode o contêiner da Book API:
+    ```sh
+    docker run --name book-api --network book-network book-api
+    ```
 
 ## Uso
 
@@ -70,6 +89,3 @@ curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d 
 - **Gateway**: Utilizado para rotear requisições para os microserviços apropriados.
 
 Fique à vontade para contribuir com este projeto.
-
-
-
